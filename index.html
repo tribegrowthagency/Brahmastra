@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brahmastra Energy — Ops Hub | Tribe Agency</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0C14;--surface:#0E1435;--surface2:#080E28;
+  --border:#1E2E60;--border2:#1A2450;
+  --text:#E8ECF8;--text2:#D0D8F0;--muted:#6080A8;--muted2:#3A4A70;
+  --gold:#D29B28;--gold-light:#FAC775;--gold-bg:#1A1200;
+  --green:#4ABB6A;--green-light:#C0DD97;--green-bg:#0D2018;
+  --blue:#7BA7D4;--blue-light:#B5D4F4;--blue-bg:#0D1830;
+  --red:#E8948C;--red-light:#F7C1C1;--red-bg:#1A0808;
+  --purple:#B8B5F0;--purple-light:#CECBF6;--purple-bg:#110F2A;
+  --gray:#A8A8A0;--gray-bg:#18181A;
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+
+/* ── TOPBAR ── */
+.topbar{background:#04060F;border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-hex{width:30px;height:30px;flex-shrink:0}
+.logo-text{font-size:14px;font-weight:700;color:#F0F4FF;letter-spacing:.03em}
+.logo-sub{font-size:10px;color:var(--gold);font-weight:500;margin-top:1px;letter-spacing:.04em;text-transform:uppercase}
+.brand-pill{background:var(--gold-bg);border:1px solid var(--gold);border-radius:20px;padding:4px 14px;font-size:11px;color:var(--gold);font-weight:600;letter-spacing:.02em}
+.sync-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--muted2);transition:background .3s;flex-shrink:0}
+.sync-dot.live{background:var(--green);box-shadow:0 0 6px rgba(74,187,106,.5)}
+.sync-dot.loading{background:var(--gold);animation:pulse .8s infinite}
+.sync-dot.error{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;padding:0 24px;background:#04060F;border-bottom:1px solid var(--border2);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 16px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ── PANELS ── */
+.panel{display:none;padding:24px;max-width:1200px;margin:0 auto}.panel.on{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px}
+.card-title{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em}
+.card-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title-row .card-title{margin-bottom:0}
+
+/* ── METRICS ── */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.metric{background:var(--surface2);border-radius:var(--radius-sm);padding:14px 16px;border:1px solid var(--border2)}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.metric-val{font-size:22px;font-weight:700;color:#F0F4FF;letter-spacing:-.02em}
+.metric-sub{font-size:11px;color:var(--muted2);margin-top:4px}
+
+/* ── TWO COL ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ── FORM ELEMENTS ── */
+.fl{font-size:11px;color:var(--muted);margin-bottom:5px;margin-top:10px;display:block;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.fl:first-child{margin-top:0}
+.inp,.inp-num,input[type=number],select,textarea{padding:8px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);outline:none;font-family:inherit;transition:border-color .15s;width:100%}
+.inp:focus,.inp-num:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:var(--gold)}
+input[type=number]{width:90px}
+select{cursor:pointer}
+textarea{resize:vertical}
+
+/* ── BUTTONS ── */
+.btn{padding:8px 16px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s;font-weight:500;white-space:nowrap;font-family:inherit}
+.btn:hover{background:var(--border2);border-color:var(--gold)}
+.btn-primary{background:var(--gold);color:#04060F;border-color:var(--gold);font-weight:700}
+.btn-primary:hover{background:#E6B246;border-color:#E6B246}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn-ghost:hover{color:var(--text);background:var(--surface2);border-color:var(--border2)}
+
+/* ── QUICK ACTION BUTTONS ── */
+.quick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.qa-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12px;font-weight:600;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
+.qa-btn:hover{border-color:var(--gold);color:var(--gold-light);background:var(--gold-bg)}
+.qa-btn .qa-icon{font-size:14px}
+
+/* ── TAGS / PILLS ── */
+.tag{display:inline-flex;align-items:center;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap;vertical-align:middle;letter-spacing:.03em}
+.tag-gold{background:rgba(250,199,117,.12);color:var(--gold-light);border:1px solid rgba(250,199,117,.3)}
+.tag-green{background:rgba(192,221,151,.12);color:var(--green-light);border:1px solid rgba(192,221,151,.3)}
+.tag-blue{background:rgba(181,212,244,.12);color:var(--blue-light);border:1px solid rgba(181,212,244,.3)}
+.tag-red{background:rgba(247,193,193,.12);color:var(--red-light);border:1px solid rgba(247,193,193,.3)}
+.tag-purple{background:rgba(206,203,246,.12);color:var(--purple-light);border:1px solid rgba(206,203,246,.3)}
+.tag-gray{background:rgba(211,209,199,.08);color:#A8A8A0;border:1px solid rgba(211,209,199,.2)}
+
+/* status pills */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.pill::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.pill-upcoming{background:rgba(96,128,168,.1);color:var(--muted);border:1px solid rgba(96,128,168,.25)}.pill-upcoming::before{background:var(--muted)}
+.pill-active{background:rgba(210,155,40,.1);color:var(--gold-light);border:1px solid rgba(210,155,40,.3)}.pill-active::before{background:var(--gold)}
+.pill-activated{background:rgba(74,187,106,.1);color:var(--green-light);border:1px solid rgba(74,187,106,.3)}.pill-activated::before{background:var(--green)}
+.pill-locked{background:rgba(181,212,244,.1);color:var(--blue-light);border:1px solid rgba(181,212,244,.3)}.pill-locked::before{background:var(--blue)}
+.pill-threat-low{background:rgba(211,209,199,.07);color:#A8A8A0;border:1px solid rgba(211,209,199,.2)}.pill-threat-low::before{background:#666}
+.pill-threat-med{background:rgba(210,155,40,.1);color:var(--gold-light);border:1px solid rgba(210,155,40,.3)}.pill-threat-med::before{background:var(--gold)}
+.pill-threat-high{background:rgba(247,193,193,.12);color:var(--red-light);border:1px solid rgba(247,193,193,.3)}.pill-threat-high::before{background:var(--red);box-shadow:0 0 6px rgba(232,148,140,.5)}
+
+/* creator status pills */
+.cr-status-pill{display:inline-flex;align-items:center;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.crs-dm{background:rgba(168,168,160,.08);color:#A8A8A0;border:1px solid rgba(168,168,160,.2)}
+.crs-interested{background:rgba(181,212,244,.12);color:var(--blue-light);border:1px solid rgba(181,212,244,.3)}
+.crs-sent{background:rgba(250,199,117,.12);color:var(--gold-light);border:1px solid rgba(250,199,117,.3)}
+.crs-live{background:rgba(192,221,151,.12);color:var(--green-light);border:1px solid rgba(192,221,151,.3)}
+.crs-noreply{background:rgba(168,168,160,.06);color:#666;border:1px solid rgba(168,168,160,.12)}
+.crs-notfit{background:rgba(247,193,193,.08);color:#aa8888;border:1px solid rgba(247,193,193,.2)}
+
+/* ── PROGRESS ── */
+.prog-bar{height:4px;background:var(--border2);border-radius:2px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;border-radius:2px;background:var(--gold);transition:width .35s}
+
+/* ── NOTICE ── */
+.notice{font-size:13px;color:#8090B8;padding:12px 16px;background:var(--surface2);border-radius:var(--radius-sm);line-height:1.6;margin-bottom:16px;border-left:2px solid var(--gold)}
+
+/* ── TABLE ROWS ── */
+.kpi-row{display:grid;grid-template-columns:200px 80px 80px 80px 80px 1fr;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border2)}
+.kpi-row:last-child{border-bottom:none}
+.kpi-head{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.camp-grid{display:grid;grid-template-columns:160px 110px 80px 80px 80px 1fr;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border2)}
+.camp-grid:last-child{border-bottom:none}
+.camp-head{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.cr-grid{display:grid;grid-template-columns:140px 80px 70px 85px 120px 1fr;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--border2)}
+.cr-grid:last-child{border-bottom:none}
+.cr-head{font-size:10px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;padding-bottom:10px;border-bottom:1px solid var(--border)}
+
+/* ── ACTIVITY FEED ── */
+.activity-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border2)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.activity-dot-kpi{background:var(--gold)}
+.activity-dot-creator{background:var(--blue)}
+.activity-dot-campus{background:var(--green)}
+.activity-dot-intel{background:var(--purple)}
+.activity-dot-task{background:var(--muted)}
+.activity-text{font-size:13px;color:var(--text2);flex:1;line-height:1.5}
+.activity-time{font-size:11px;color:var(--muted2);flex-shrink:0;margin-top:2px}
+
+/* ── PIPELINE SUMMARY ── */
+.pipeline-counts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.pc-item{flex:1;min-width:90px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;text-align:center}
+.pc-num{font-size:20px;font-weight:700;color:#F0F4FF}
+.pc-label{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+
+/* ── COMPETITOR WATCH ── */
+.comp-entry{padding:12px 0;border-bottom:1px solid var(--border2)}
+.comp-entry:last-child{border-bottom:none}
+.comp-entry.high-threat{background:rgba(247,193,193,.04);border-left:2px solid var(--red);padding-left:12px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-left:-2px}
+.comp-entry-header{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.comp-entry-brand{font-size:13px;font-weight:600;color:var(--text2)}
+.comp-entry-date{font-size:11px;color:var(--muted2);margin-left:auto}
+.comp-entry-move{font-size:13px;color:#8090B8;line-height:1.55}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;z-index:999;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{background:var(--green-bg);border:1px solid var(--green);color:var(--green-light)}
+.toast.err{background:var(--red-bg);border:1px solid var(--red);color:var(--red-light)}
+.toast.info{background:var(--gold-bg);border:1px solid var(--gold);color:var(--gold-light)}
+
+/* ── MISC ── */
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.divider{height:1px;background:var(--border2);margin:14px 0}
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border2)}
+.stat-row:last-child{border-bottom:none}
+.stat-label{font-size:13px;color:var(--text2)}
+.stat-val{font-size:13px;font-weight:600;color:#F0F4FF}
+.empty-state{font-size:13px;color:var(--muted2);padding:16px 0;text-align:center}
+.gap-chip{display:inline-flex;align-items:center;gap:6px;font-size:18px;font-weight:700}
+.gap-behind{color:var(--red-light)}
+.gap-ahead{color:var(--green-light)}
+
+/* ── WEEK TASK ROW ── */
+.task-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border2)}
+.task-row:last-child{border-bottom:none}
+.cb{width:18px;height:18px;border:1px solid var(--border2);border-radius:4px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .15s;background:transparent}
+.cb:hover{border-color:var(--gold)}
+.cb.done{background:rgba(74,187,106,.15);border-color:var(--green)}
+.cb.done::after{content:'';display:block;width:5px;height:9px;border:2px solid var(--green);border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-1px)}
+.task-text{font-size:13px;color:var(--text2);line-height:1.55;flex:1}
+.task-text.done{text-decoration:line-through;color:var(--muted2)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:760px){
+  .two-col,.three-col{grid-template-columns:1fr}
+  .metric-grid{grid-template-columns:1fr 1fr}
+  .kpi-row,.camp-grid,.cr-grid{grid-template-columns:1fr 1fr}
+  .kpi-head,.camp-head,.cr-head{display:none}
+  .topbar{padding:10px 16px}
+  .panel{padding:16px}
+  .tabs{padding:0 12px}
+  .quick-actions{gap:6px}
+  .pipeline-counts{gap:6px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">
+      <svg class="logo-hex" viewBox="0 0 32 32" fill="none">
+        <polygon points="16,2 28,9 28,23 16,30 4,23 4,9" fill="#0E1840" stroke="#D29B28" stroke-width="1"/>
+        <polygon points="16,7 24,12 24,20 16,25 8,20 8,12" fill="#D29B28"/>
+        <polygon points="16,12 20,14.5 20,19.5 16,22 12,19.5 12,14.5" fill="#0E1840"/>
+        <polygon points="16,14 18.6,15.5 18.6,18.5 16,20 13.4,18.5 13.4,15.5" fill="#E6B246"/>
+      </svg>
+      <div>
+        <div class="logo-text">TRIBE AGENCY</div>
+        <div class="logo-sub">Build · Engage · Grow</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-label">Connecting…</span>
+    </div>
+    <div class="brand-pill">Brahmastra Energy — 6-Month Ops Hub</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab on" onclick="sw('dash',this)">Dashboard</div>
+  <div class="tab" onclick="sw('tasks',this)">Weekly Tasks</div>
+  <div class="tab" onclick="sw('kpis',this)">KPI Tracker</div>
+  <div class="tab" onclick="sw('campus',this)">Campus Ops</div>
+  <div class="tab" onclick="sw('creators',this)">Creator CRM</div>
+  <div class="tab" onclick="sw('hell',this)">Competitor Intel</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════
+     DASHBOARD
+     ════════════════════════════════════ -->
+<div id="dash" class="panel on">
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <button class="qa-btn" onclick="sw('kpis',document.querySelectorAll('.tab')[2])"><span class="qa-icon">📊</span> Update KPI</button>
+    <button class="qa-btn" onclick="sw('creators',document.querySelectorAll('.tab')[4]);setTimeout(()=>document.getElementById('cr-handle').focus(),100)"><span class="qa-icon">➕</span> Add Creator</button>
+    <button class="qa-btn" onclick="sw('campus',document.querySelectorAll('.tab')[3])"><span class="qa-icon">🎯</span> Log Activation</button>
+    <button class="qa-btn" onclick="sw('hell',document.querySelectorAll('.tab')[5]);setTimeout(()=>document.getElementById('comp-move').focus(),100)"><span class="qa-icon">🔍</span> Add Intel</button>
+  </div>
+
+  <!-- KPI Metrics -->
+  <div class="metric-grid">
+    <div class="metric"><div class="metric-label">Instagram Followers</div><div class="metric-val" id="d-followers">—</div><div class="metric-sub">Target M1: 1,000</div></div>
+    <div class="metric"><div class="metric-label">Amazon Reviews</div><div class="metric-val" id="d-reviews">—</div><div class="metric-sub">Target M1: 15</div></div>
+    <div class="metric"><div class="metric-label">Campuses Activated</div><div class="metric-val" id="d-camps">0 / 9</div><div class="metric-sub">Punjab → NCR</div></div>
+    <div class="metric"><div class="metric-label">Brahmastra Warriors</div><div class="metric-val" id="d-warriors">0</div><div class="metric-sub">Target M1: 3–5</div></div>
+    <div class="metric"><div class="metric-label">Creator Partnerships</div><div class="metric-val" id="d-creators">0</div><div class="metric-sub">Target M1: 3–5</div></div>
+    <div class="metric"><div class="metric-label">Bulk Buyers</div><div class="metric-val" id="d-buyers">0</div><div class="metric-sub">Target M1: 3–5</div></div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- Left column -->
+    <div>
+      <!-- This Week Focus -->
+      <div class="card" id="week-focus-card">
+        <div class="card-title-row">
+          <div class="card-title">This Week</div>
+          <select id="week-dash-sel" onchange="renderWeekFocusCard()" style="font-size:12px;padding:4px 8px;width:auto">
+            <option value="w1">Week 1</option><option value="w2">Week 2</option><option value="w3">Week 3</option>
+            <option value="w4">Week 4</option><option value="w5">Week 5</option><option value="w6">Week 6</option>
+            <option value="w7">Week 7</option><option value="w8">Week 8</option><option value="w9">Week 9</option>
+            <option value="w10">Week 10</option><option value="w11">Week 11</option><option value="w12">Week 12</option>
+            <option value="w13">Week 13</option><option value="w14">Week 14</option><option value="w15">Week 15</option>
+            <option value="w16">Week 16</option><option value="w17">Weeks 17–18</option><option value="w19">Weeks 19–20</option>
+            <option value="w21">Weeks 21–22</option><option value="w23">Weeks 23–24</option>
+          </select>
+        </div>
+        <div id="week-focus-stats" style="margin-bottom:12px"></div>
+        <div class="prog-bar"><div class="prog-fill" id="wf-prog-fill" style="width:0%"></div></div>
+        <div id="week-focus-tasks" style="margin-top:12px"></div>
+      </div>
+
+      <!-- Month Focus -->
+      <div class="card">
+        <div class="card-title">Month Focus</div>
+        <select id="cur-month" onchange="updateMonthFocus()" style="margin-bottom:12px;width:100%">
+          <option value="1">Month 1 — Foundation</option>
+          <option value="2">Month 2 — Thapar Domination</option>
+          <option value="3">Month 3 — PEC + Chitkara</option>
+          <option value="4">Month 4 — CU Mohali</option>
+          <option value="5">Month 5 — NCR Entry</option>
+          <option value="6">Month 6 — National</option>
+        </select>
+        <div id="month-focus-text" style="font-size:13px;color:#B0B8D0;line-height:1.7"></div>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div>
+      <!-- Update Numbers -->
+      <div class="card">
+        <div class="card-title">Update Numbers</div>
+        <div class="two-col">
+          <div>
+            <span class="fl">Instagram Followers</span><input type="number" id="u-followers" placeholder="e.g. 847" style="width:100%;margin-bottom:10px">
+            <span class="fl">Amazon Reviews</span><input type="number" id="u-reviews" placeholder="e.g. 12" style="width:100%;margin-bottom:10px">
+            <span class="fl">Active Warriors</span><input type="number" id="u-warriors" placeholder="e.g. 4" style="width:100%">
+          </div>
+          <div>
+            <span class="fl">Campuses Activated</span><input type="number" id="u-camps" placeholder="0–9" style="width:100%;margin-bottom:10px">
+            <span class="fl">Creator Partnerships</span><input type="number" id="u-creators" placeholder="e.g. 3" style="width:100%;margin-bottom:10px">
+            <span class="fl">Bulk Buyers</span><input type="number" id="u-buyers" placeholder="e.g. 2" style="width:100%">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="updateDash()" style="margin-top:14px;width:100%" id="dash-save-btn">Save</button>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-title">Recent Activity</div>
+        <div id="activity-feed"><div class="empty-state">No activity yet</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     WEEKLY TASKS
+     ════════════════════════════════════ -->
+<div id="tasks" class="panel">
+  <div class="notice">Check off tasks as you complete them. Switch weeks using the dropdown below.</div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+    <select id="week-sel" onchange="loadWeek()" style="flex:1;min-width:200px">
+      <option value="w1">Week 1 — Brand Bible & identity lock</option>
+      <option value="w2">Week 2 — First 4 posts + outreach</option>
+      <option value="w3">Week 3 — Thapar recon + Giveaway 1</option>
+      <option value="w4">Week 4 — Month 1 review + Warriors launch</option>
+      <option value="w5">Week 5 — Thapar Activation Day 1</option>
+      <option value="w6">Week 6 — Saturnalia lock + Amazon Push Week</option>
+      <option value="w7">Week 7 — Saturnalia fest + Gaming goes live</option>
+      <option value="w8">Week 8 — Month 2 review + PEC prep</option>
+      <option value="w9">Week 9 — PEC Activation 1 + PECFest pitch</option>
+      <option value="w10">Week 10 — Chitkara + first event sponsorship</option>
+      <option value="w11">Week 11 — Double Activation Day</option>
+      <option value="w12">Week 12 — 3-month report + CU Mohali plan</option>
+      <option value="w13">Week 13 — CU recon + reps recruited</option>
+      <option value="w14">Week 14 — CU Activation Day 1</option>
+      <option value="w15">Week 15 — CU Fest activation</option>
+      <option value="w16">Week 16 — Month 4 review + NCR brief</option>
+      <option value="w17">Weeks 17–18 — NCR entry: DTU + NSUT</option>
+      <option value="w19">Weeks 19–20 — Amity + JIIT + IIIT Delhi</option>
+      <option value="w21">Weeks 21–22 — NCR distribution + mega creator</option>
+      <option value="w23">Weeks 23–24 — 6-month final report</option>
+    </select>
+    <button class="btn btn-sm" onclick="resetWeek()">Reset week</button>
+  </div>
+  <div class="card" style="padding:14px 20px">
+    <div id="week-progress-label" style="font-size:13px;color:var(--muted);margin-bottom:8px"></div>
+    <div class="prog-bar"><div class="prog-fill" id="week-prog-fill" style="width:0%"></div></div>
+  </div>
+  <div class="card" id="task-list"></div>
+</div>
+
+<!-- ════════════════════════════════════
+     KPI TRACKER
+     ════════════════════════════════════ -->
+<div id="kpis" class="panel">
+  <div class="notice">Enter your actual numbers. Targets are pre-filled from the 6-month plan. Update every Monday.</div>
+  <div class="card" style="overflow-x:auto">
+    <div style="display:grid;grid-template-columns:200px 80px 80px 80px 80px 1fr;gap:8px;min-width:700px">
+      <div class="kpi-head">Metric</div>
+      <div class="kpi-head" style="text-align:center">M1 Target</div>
+      <div class="kpi-head" style="text-align:center">M2 Target</div>
+      <div class="kpi-head" style="text-align:center">M3 Target</div>
+      <div class="kpi-head" style="text-align:center">M6 Target</div>
+      <div class="kpi-head">Your Actual</div>
+    </div>
+    <div id="kpi-rows" style="min-width:700px"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     CAMPUS OPS
+     ════════════════════════════════════ -->
+<div id="campus" class="panel">
+  <div class="notice">Log every activation the moment it happens — cans sampled, content pieces created, bulk leads captured.</div>
+  <div class="card" style="overflow-x:auto">
+    <div style="display:grid;grid-template-columns:160px 110px 80px 80px 80px 1fr;gap:8px;min-width:700px">
+      <div class="camp-head">Campus</div>
+      <div class="camp-head">Status</div>
+      <div class="camp-head" style="text-align:center">Cans</div>
+      <div class="camp-head" style="text-align:center">Content</div>
+      <div class="camp-head" style="text-align:center">Leads</div>
+      <div class="camp-head">Society Partner</div>
+    </div>
+    <div id="campus-rows" style="min-width:700px"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Log an Activation</div>
+    <div class="two-col">
+      <div>
+        <span class="fl">Campus</span>
+        <select id="camp-sel" style="width:100%;margin-bottom:10px">
+          <option>Thapar University</option><option>PEC Chandigarh</option><option>Chitkara University</option>
+          <option>CU Mohali</option><option>DTU Delhi</option><option>NSUT Delhi</option>
+          <option>IIIT Delhi</option><option>Amity Noida</option><option>JIIT Noida</option>
+        </select>
+        <span class="fl">Society Partner (if any)</span>
+        <input class="inp" id="camp-society" placeholder="e.g. E-Cell Thapar, NOX Dance">
+      </div>
+      <div>
+        <span class="fl">Cans Sampled</span><input type="number" id="camp-cans" placeholder="e.g. 150" style="width:100%;margin-bottom:10px">
+        <span class="fl">Content Pieces Created</span><input type="number" id="camp-content" placeholder="e.g. 5" style="width:100%;margin-bottom:10px">
+        <span class="fl">Bulk Order Leads</span><input type="number" id="camp-leads" placeholder="e.g. 3" style="width:100%">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="logCampus()" style="margin-top:14px" id="camp-save-btn">Log Activation</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     CREATOR CRM
+     ════════════════════════════════════ -->
+<div id="creators" class="panel">
+  <div class="notice">Every creator you DM goes in here. Update their status as they move through the pipeline.</div>
+
+  <!-- Pipeline Summary -->
+  <div class="pipeline-counts" id="pipeline-summary">
+    <div class="pc-item"><div class="pc-num" id="pc-dm">0</div><div class="pc-label">DMs Sent</div></div>
+    <div class="pc-item"><div class="pc-num" id="pc-interested">0</div><div class="pc-label">Interested</div></div>
+    <div class="pc-item"><div class="pc-num" id="pc-sent">0</div><div class="pc-label">Product Sent</div></div>
+    <div class="pc-item"><div class="pc-num" id="pc-live">0</div><div class="pc-label">Content Live</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Add Creator</div>
+    <div class="three-col">
+      <div>
+        <span class="fl">Instagram Handle</span>
+        <input class="inp" id="cr-handle" placeholder="@handle">
+      </div>
+      <div>
+        <span class="fl">Niche</span>
+        <select id="cr-niche" style="width:100%">
+          <option>Fitness</option><option>Gaming</option><option>Campus</option>
+          <option>Lifestyle</option><option>Mythology / Desi</option><option>Other</option>
+        </select>
+      </div>
+      <div>
+        <span class="fl">Followers (in K)</span>
+        <input type="number" id="cr-followers" placeholder="e.g. 45" style="width:100%">
+      </div>
+      <div>
+        <span class="fl">Status</span>
+        <select id="cr-status" style="width:100%">
+          <option>DM sent</option><option>Replied — interested</option><option>Product sent</option>
+          <option>Content live</option><option>No reply</option><option>Not a fit</option>
+        </select>
+      </div>
+      <div>
+        <span class="fl">Wave</span>
+        <select id="cr-wave" style="width:100%">
+          <option>Wave 1</option><option>Wave 2</option><option>Wave 3</option><option>Wave 4</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:1px">
+        <button class="btn btn-primary" style="width:100%" onclick="addCreator()" id="cr-add-btn">Add Creator</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="overflow-x:auto">
+    <div class="card-title">Pipeline</div>
+    <div style="display:grid;grid-template-columns:140px 80px 70px 85px 120px 1fr;gap:8px;min-width:640px">
+      <div class="cr-head">Handle</div><div class="cr-head">Niche</div><div class="cr-head">Followers</div>
+      <div class="cr-head">Wave</div><div class="cr-head">Status</div><div class="cr-head">Update</div>
+    </div>
+    <div id="creator-list" style="min-width:640px"><div class="empty-state">No creators added yet.</div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     COMPETITOR INTEL
+     ════════════════════════════════════ -->
+<div id="hell" class="panel">
+  <div class="notice">Monitor competitors every Monday. Log every significant move — activations, campaigns, campus presence.</div>
+
+  <!-- Competitor Watch summary -->
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Competitor Watch</div>
+      <div id="comp-summary-stats">
+        <div class="stat-row"><span class="stat-label">Total moves logged</span><span class="stat-val" id="cs-total">0</span></div>
+        <div class="stat-row"><span class="stat-label">High threat</span><span class="stat-val" style="color:var(--red-light)" id="cs-high">0</span></div>
+        <div class="stat-row"><span class="stat-label">Medium threat</span><span class="stat-val" style="color:var(--gold-light)" id="cs-med">0</span></div>
+        <div class="stat-row"><span class="stat-label">Monitoring only</span><span class="stat-val" style="color:var(--muted)" id="cs-low">0</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Brands Tracked</div>
+      <div id="comp-brand-breakdown"><div class="empty-state">No intel logged yet</div></div>
+    </div>
+  </div>
+
+  <!-- Log a move -->
+  <div class="card">
+    <div class="card-title">Log a Competitor Move</div>
+    <span class="fl">Brand</span>
+    <select id="comp-brand" style="width:100%;margin-bottom:10px">
+      <option>Hell Energy India</option><option>Sting India</option>
+      <option>Red Bull India</option><option>Monster India</option><option>Other</option>
+    </select>
+    <span class="fl">What did they do?</span>
+    <textarea id="comp-move" rows="3" style="margin-bottom:10px" placeholder="e.g. Hell activated at DTU Delhi this week — 500+ cans distributed outside admin block"></textarea>
+    <span class="fl">Threat Level</span>
+    <select id="comp-threat" style="width:100%;margin-bottom:12px">
+      <option>Low — monitoring only</option>
+      <option>Medium — adjust our timing</option>
+      <option>High — respond immediately</option>
+    </select>
+    <button class="btn btn-primary" onclick="logCompMove()" id="intel-save-btn">Log This Move</button>
+  </div>
+
+  <!-- Activity Log -->
+  <div class="card">
+    <div class="card-title">Activity Log</div>
+    <div id="comp-log"><div class="empty-state">No intel logged yet. Check competitors every Monday morning.</div></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG — swap this block for Supabase credentials
+// ═══════════════════════════════════════════════════════════════
+const CONFIG = {
+  // Supabase (fill in when ready)
+  SUPABASE_URL:  'https://vutwywymxkkyrzlxwlyo.supabase.co',
+  SUPABASE_KEY:  'sb_publishable_BgX1gOW15zoC3pypNKR3hw_Medvhl62',
+
+  // Feature flags
+  BACKEND: 'supabase',  // 'local' | 'supabase'
+  SYNC_INTERVAL_MS: 30000,
+};
+
+// ═══════════════════════════════════════════════════════════════
+// DATA LAYER — isolate all reads/writes here for easy Supabase swap
+// ═══════════════════════════════════════════════════════════════
+const DB = {
+  // Save — upserts for kpis (on_conflict=metric), plain INSERT for others.
+  // Pass {returnId:true} to get the new row's id back.
+  async save(table, record, {returnId = false} = {}) {
+    if (CONFIG.BACKEND === 'supabase' && CONFIG.SUPABASE_URL) {
+      const isKpi = table === 'kpis';
+      const url = `${CONFIG.SUPABASE_URL}/rest/v1/${table}${isKpi ? '?on_conflict=metric' : ''}`;
+      const prefer = isKpi ? 'resolution=merge-duplicates' : (returnId ? 'return=representation' : 'return=minimal');
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'apikey': CONFIG.SUPABASE_KEY,
+          'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': prefer,
+        },
+        body: JSON.stringify(record),
+      });
+      if (!res.ok) {
+        const detail = await res.text().catch(() => '');
+        throw new Error(`Supabase save failed: ${res.status} ${detail}`);
+      }
+      if (returnId) { const rows = await res.json(); return rows[0]?.id || null; }
+      return true;
+    }
+    return returnId ? null : true;
+  },
+
+  // PATCH a single row by id
+  async patch(table, id, record) {
+    if (CONFIG.BACKEND === 'supabase' && CONFIG.SUPABASE_URL) {
+      const res = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': CONFIG.SUPABASE_KEY,
+          'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify(record),
+      });
+      if (!res.ok) {
+        const detail = await res.text().catch(() => '');
+        throw new Error(`Supabase patch failed: ${res.status} ${detail}`);
+      }
+      return true;
+    }
+    return true;
+  },
+
+  // Fetch all rows from a table
+  async fetch(table) {
+    if (CONFIG.BACKEND === 'supabase' && CONFIG.SUPABASE_URL) {
+      const res = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${table}?select=*&order=created_at.asc`, {
+        headers: {
+          'apikey': CONFIG.SUPABASE_KEY,
+          'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+        },
+      });
+      if (!res.ok) throw new Error(`Supabase fetch failed: ${res.status}`);
+      return res.json();
+    }
+    return localStore[table] || [];
+  },
+};
+
+// Local in-memory store (persists for session; replace with Supabase for real persistence)
+const localStore = {
+  kpis: [], creators: [], campus: [], tasks: [], intel: [],
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ACTIVITY FEED
+// ═══════════════════════════════════════════════════════════════
+const activityLog = [];
+
+function addActivity(type, text) {
+  const now = new Date();
+  const time = now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+  activityLog.unshift({ type, text, time });
+  if (activityLog.length > 20) activityLog.pop();
+  renderActivity();
+}
+
+function renderActivity() {
+  const el = document.getElementById('activity-feed');
+  if (!activityLog.length) { el.innerHTML = '<div class="empty-state">No activity yet</div>'; return; }
+  el.innerHTML = activityLog.slice(0, 8).map(a => `
+    <div class="activity-item">
+      <div class="activity-dot activity-dot-${a.type}"></div>
+      <div class="activity-text">${a.text}</div>
+      <div class="activity-time">${a.time}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+function toast(msg, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SYNC STATE
+// ═══════════════════════════════════════════════════════════════
+function setSyncState(state, label) {
+  document.getElementById('sync-dot').className = 'sync-dot ' + state;
+  document.getElementById('sync-label').textContent = label;
+}
+
+// Maps the metric keys used in saves → KPI_DATA index + dashboard display element
+const METRIC_LOAD_MAP = {
+  'Followers':  {kpiIdx: 0, displayId: 'd-followers'},
+  'Reviews':    {kpiIdx: 2, displayId: 'd-reviews'},
+  'Warriors':   {kpiIdx: 5, displayId: 'd-warriors'},
+  'Creators':   {kpiIdx: 4, displayId: 'd-creators'},
+  'BulkBuyers': {kpiIdx: 6, displayId: 'd-buyers'},
+  'Campuses':   {kpiIdx: -1, displayId: 'd-camps', isCamps: true},
+};
+
+async function syncKPIs() {
+  const rows = await DB.fetch('kpis');
+  rows.forEach(row => {
+    const m = METRIC_LOAD_MAP[row.metric];
+    if (!m) return;
+    const val = parseInt(row.data?.value) || 0;
+    if (m.kpiIdx >= 0) KPI_DATA[m.kpiIdx].a = val;
+    if (m.isCamps) {
+      document.getElementById('d-camps').textContent = val + ' / 9';
+    } else if (val) {
+      document.getElementById(m.displayId).textContent = val.toLocaleString();
+    }
+  });
+  renderKPIs();
+}
+
+async function syncCreators() {
+  try {
+    const rows = await DB.fetch('creators');
+    creatorList = rows
+      .map(row => ({...row.data, _id: row.id}))
+      .filter(c => c.h);
+    renderCreators();
+    document.getElementById('d-creators').textContent = creatorList.filter(c => c.status === 'Content live').length;
+  } catch(e) { console.error('Creator sync failed:', e); }
+}
+
+async function syncCampus() {
+  try {
+    const rows = await DB.fetch('campus');
+    // rows ordered asc by created_at — last row per campus wins
+    rows.forEach(row => {
+      const d = row.data;
+      if (!d?.campus || !campusData[d.campus]) return;
+      campusData[d.campus] = {
+        status:  d.status  || 'Activated',
+        cans:    d.cans    || 0,
+        content: d.content || 0,
+        leads:   d.leads   || 0,
+        society: d.society || '',
+      };
+    });
+    const n = Object.values(campusData).filter(c => c.status === 'Activated' || c.status === 'Partnership Locked').length;
+    document.getElementById('d-camps').textContent = n + ' / 9';
+    renderCampus();
+  } catch(e) { console.error('Campus sync failed:', e); }
+}
+
+async function syncTasks() {
+  try {
+    const rows = await DB.fetch('tasks');
+    // rows ordered asc — last row per (week, task_index) wins
+    rows.forEach(row => {
+      const d = row.data;
+      if (!d?.week) return;
+      if (!taskState[d.week]) taskState[d.week] = {};
+      taskState[d.week][d.task_index] = d.done;
+    });
+    loadWeek();
+    renderWeekFocusCard();
+  } catch(e) { console.error('Task sync failed:', e); }
+}
+
+async function syncIntel() {
+  try {
+    const rows = await DB.fetch('intel');
+    compLog = rows
+      .reverse() // most recent first
+      .map(row => row.data)
+      .filter(d => d?.move);
+    renderCompLog();
+  } catch(e) { console.error('Intel sync failed:', e); }
+}
+
+async function syncAll() {
+  setSyncState('loading', 'Syncing…');
+  try {
+    await Promise.all([syncKPIs(), syncCreators(), syncCampus(), syncTasks(), syncIntel()]);
+    setSyncState('live', 'Live · ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'}));
+  } catch(e) {
+    setSyncState('error', 'Sync failed');
+    console.error('Sync error:', e);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MONTH FOCUS
+// ═══════════════════════════════════════════════════════════════
+const MF = {
+  1: 'MONTH 1 — FOUNDATION. Brand Bible, visual identity, Instagram overhaul, 16 posts live, Thapar mapped. Every creative decision made here runs for 6 months. The brand identity is the final push. Lock it.',
+  2: 'MONTH 2 — THAPAR DOMINATION. You live here — use it. Saturnalia sponsorship, society deals, hostel drops, Creator Wave 1. Goal: every Thapar student knows the name Brahmastra.',
+  3: 'MONTH 3 — PEC + CHITKARA. Two campuses simultaneously. PECFest and Explore Fest (7,000+ students) sponsorships. Double Activation Day. Creator Wave 2 live. 3 Punjab campuses activated.',
+  4: 'MONTH 4 — CU MOHALI. 30,000 students. CU Fest official energy drink — 32 events, 148 universities. AI Fest 2026 pitch. Multi-zone activation. This is the national scale moment.',
+  5: 'MONTH 5 — NCR ENTRY. DTU, NSUT, IIIT Delhi, Amity, JIIT Noida. Creator Wave 4 goes national. Hell Energy is in Delhi too — move faster than them on every campus.',
+  6: 'MONTH 6 — NATIONAL. Mega-creator integration. 30+ stocking locations. 120+ Amazon reviews. 6-month final report. Brahmastra is no longer a new brand. Month 7 plan delivered.'
+};
+function updateMonthFocus() {
+  const m = document.getElementById('cur-month').value;
+  document.getElementById('month-focus-text').textContent = MF[m];
+}
+updateMonthFocus();
+
+// ═══════════════════════════════════════════════════════════════
+// WEEK TASKS DATA
+// ═══════════════════════════════════════════════════════════════
+const WEEKS = {
+  w1:[
+    {t:'Write the Brahmastra Brand Bible — voice rules, tone, language dos/don\'ts, persona definitions, competitive positioning against all 5 competitors',tag:'identity'},
+    {t:'Build complete visual identity: Void Black + Brahmastra Gold + Pure White hex codes, typography rules, 6 can mockup scenarios (1am desk / gym bag / pre-match / gaming setup / hostel room / morning before)',tag:'identity'},
+    {t:'Build Reel motion templates in CapCut or After Effects: 0.5s hook animation + brand name sting + outro CTA',tag:'content'},
+    {t:'Instagram profile overhaul: bio rewritten with The Final Push positioning + Amazon link, 8 Highlights created and populated',tag:'content'},
+    {t:'Full competitor audit: document Hell Energy India, Sting, Red Bull, Monster, Tzinga current content, posting frequency, engagement rate, recent campaigns',tag:'intel'},
+    {t:'Set Google Alerts: "Hell Energy India", "Brahmastra Energy", "new energy drink India launch"',tag:'intel'},
+    {t:'Build influencer hit-list: 50 targets with handle, followers, engagement rate, niche, fit score (1–10)',tag:'outreach'},
+    {t:'Thapar insider mapping: top 10 influential students, 5 most active societies, Saturnalia dates, hostel block layout, canteen peak hours',tag:'campus'},
+    {t:'WhatsApp Business account setup: bulk order catalog, auto-reply templates for retailer enquiries',tag:'ops'},
+    {t:'Month 1 content calendar built and approved — all 16 posts scripted before Week 2 begins. Zero improvisation.',tag:'content'},
+  ],
+  w2:[
+    {t:'POST 1 — Brand Declaration Reel: mythology visuals + can reveal. Deliberate pace. One take. Not a hype video — a declaration.',tag:'content'},
+    {t:'POST 2 — Blind Taste Test Reel: 5 real people, no labels, zero script. Hook: "We told them it was Indian. They stopped caring after the first sip."',tag:'content'},
+    {t:'POST 3 — Price Statement: Brahmastra vs Red Bull vs Hell vs Sting. One clean graphic. Four lines. Designed to be screenshotted.',tag:'content'},
+    {t:'POST 4 — "What is Brahmastra?" mythology carousel: 6 slides, optimised for saves and DM shares',tag:'content'},
+    {t:'Daily Stories begin: Day 1 countdown / Day 2 flavor poll / Day 3 can unboxing / Day 4 "what is your final push this week?" / Day 5 Amazon CTA',tag:'content'},
+    {t:'Hashtag system deployed on all posts: #BrahmastraEnergy #TheFinalPush #MadeInIndia #IndianEnergy #InvokeIt',tag:'content'},
+    {t:'Wave 1 outreach: 20 personalised DMs to fitness + campus micro-influencers. Not a template — a specific note per person.',tag:'outreach'},
+    {t:'Amazon review campaign: personal WhatsApp/email to every existing buyer with step-by-step review guide',tag:'amazon'},
+    {t:'Hell Energy monitor: document what @hellenergy_india posted this week. Note any Punjab or Chandigarh signals.',tag:'intel'},
+  ],
+  w3:[
+    {t:'POST 5 — The Final Push Reel #1: gym / pre-workout format. Collab if Wave 1 responded. Internal shoot if not.',tag:'content'},
+    {t:'POST 6 — Lemon Flavor Drop: new person, genuine first-sip, zero script',tag:'content'},
+    {t:'POST 7 — 1am Series #1: dark room, study desk, one lamp, one can. Caption: one line.',tag:'content'},
+    {t:'POST 8 — Indian Power Episode 1: mythology carousel built for saves',tag:'content'},
+    {t:'Thapar campus recon in person: canteen peak hours, hostel common rooms, 5 campus influencers identified, 2–3 society presidents approached informally',tag:'campus'},
+    {t:'Launch Giveaway 1: "Win a month supply. Follow + tag someone about to hit their final push." Specific, not generic.',tag:'content'},
+    {t:'First UGC: find anyone who posted about Brahmastra, request permission, repost publicly and loudly',tag:'content'},
+    {t:'Follow up Wave 1 non-responses (second touch). 5-day rule: never let a warm lead go more than 5 days without a touch.',tag:'outreach'},
+    {t:'Hell Energy monitor: any Punjab / Chandigarh activation signals this week?',tag:'intel'},
+  ],
+  w4:[
+    {t:'POST 9 — Best-performing format from Weeks 2–3 repeated with a new angle. Let the data tell you what to double down on.',tag:'content'},
+    {t:'POST 10 — Behind the Can: origin story content. Who made Brahmastra. Why. What it is for.',tag:'content'},
+    {t:'POST 11 — Cola Flavor Drop: third flavor gets its dedicated Reel',tag:'content'},
+    {t:'POST 12 — Giveaway winner announcement: document the moment, post the community celebration',tag:'content'},
+    {t:'Amazon Review Sprint: second personal wave to all buyers. Target: 15 verified reviews by Month 1 end.',tag:'amazon'},
+    {t:'Warriors Programme launch: select 3–5 ambassadors (Thapar-heavy), dispatch brand kit + formal brief + personal WhatsApp contact',tag:'warriors'},
+    {t:'Month 1 Analytics Report: followers, top 3 posts by reach, average Reel views, Story completion rate, DM volume, Amazon clicks',tag:'analytics'},
+    {t:'Adjust Month 2 content calendar based on Month 1 data. Thapar activation plan finalised for Weeks 5–6.',tag:'content'},
+  ],
+  w5:[
+    {t:'THAPAR ACTIVATION 1: Main canteen + hostel lawns 12–2pm and 6–8pm. 2–3 volunteers in Brahmastra merch. Move with the crowd. Do not stand at a table. Film everything.',tag:'campus'},
+    {t:'Hostel block exam drops: 10–15 cans per block, all 8 hostel blocks. Card: "The final push. Brahmastra." Document every reaction.',tag:'campus'},
+    {t:'Society pitches: Saturnalia committee, NOX Dance Society, E-Cell Thapar, CCS — brief + product sample to each president in person',tag:'campus'},
+    {t:'POST 13 — Campus Chronicles Reel 1: "We brought Brahmastra to Thapar. Here is what happened." Same-day edit. 24-hour turnaround.',tag:'content'},
+    {t:'POST 14 — Creator social proof: Wave 1 collab Reel goes live. Natural product-in-use.',tag:'content'},
+    {t:'POST 15 — Price comparison visual: Brahmastra vs Red Bull vs Hell vs Sting on one graphic',tag:'content'},
+    {t:'Approach Thapar canteen operator and hostel mess vendors for regular stocking deal',tag:'bulk'},
+  ],
+  w6:[
+    {t:'Lock Saturnalia or one society event sponsorship: official energy drink in exchange for stage mention + sampling rights + Instagram collab',tag:'campus'},
+    {t:'POST 16 — "Brahmastra is the official energy of Saturnalia, Thapar University." First campus ownership post.',tag:'content'},
+    {t:'POST 17 — The Indian Way: one line, dark background, gold text. "The weapon was always ours." Let it sit. No hashtags needed.',tag:'content'},
+    {t:'POST 18 — Classic Flavor Drop with live Thapar campus footage',tag:'content'},
+    {t:'Amazon Push Week: all Warriors + active creators simultaneously push the Amazon link for 7 days. Track click-through.',tag:'amazon'},
+    {t:'THAPAR ACTIVATION 2: co-branded with confirmed society. Bigger crowd, more content.',tag:'campus'},
+    {t:'Launch Brahmastra Challenge: "Show us your final push moment. Tag us. Best wins a month supply + main account feature."',tag:'content'},
+    {t:'Hell Energy monitor: any Hell campus activity in Chandigarh this week?',tag:'intel'},
+  ],
+  w7:[
+    {t:'SATURNALIA / THAPAR FEST ACTIVATION: 6+ hours, sampling booth, challenge station, giveaways. Multiple cameras. Full documentation.',tag:'campus'},
+    {t:'POST 19 — Fest activation Reel: real crowd energy, no script, 24-hour turnaround',tag:'content'},
+    {t:'POST 20 — "3 hours before the exam. Morning of the match. Loading screen before the session." Three specific final push moments.',tag:'content'},
+    {t:'POST 21 — Gaming creator Reel: first Brahmastra content in the gaming niche',tag:'content'},
+    {t:'Warriors post their own content from the brand kit. Repost with The Chosen series caption.',tag:'warriors'},
+    {t:'PEC first contact through existing network: identify society leads and PECFest committee contacts',tag:'campus'},
+    {t:'Gaming creator outreach: 10–15 DMs to Indian gaming/streaming creators (20K–100K)',tag:'outreach'},
+  ],
+  w8:[
+    {t:'POST 22 — Brahmastra Challenge winner announcement: document the moment publicly',tag:'content'},
+    {t:'POST 23 — Month 2 highlights Reel: the Thapar month in review',tag:'content'},
+    {t:'POST 24 — The Chosen Spotlight 2: second Thapar Warrior featured',tag:'content'},
+    {t:'Creator Wave 2: brief 25–35 new creators across fitness / gaming / campus niches. Dispatch product.',tag:'outreach'},
+    {t:'PEC activation plan finalised: society contacts confirmed, PECFest pitch deck ready, sampling date booked for Month 3 Week 1',tag:'campus'},
+    {t:'Month 2 Analytics Report: compare every metric vs Month 1. Identify top 3 content formats. These run for 4 more months.',tag:'analytics'},
+    {t:'Hell Energy competitive update: have they activated anywhere in Punjab this month?',tag:'intel'},
+  ],
+  w9:[
+    {t:'PEC ACTIVATION 1: main canteen, hostel lawns, library entrance. 3–4 hours. Every reaction filmed.',tag:'campus'},
+    {t:'PECFest sponsorship pitch delivered to organizing committee: stage mention + sampling booth + social rights',tag:'campus'},
+    {t:'PEC society outreach: IEEE PEC, E-Cell PEC, Music Club, Dramatics Club (SAASC), Robotics Club — brief + sample to each president',tag:'campus'},
+    {t:'POST 25 — Campus Chronicles Reel 2: "Brahmastra hits Chandigarh. PEC, here we come."',tag:'content'},
+    {t:'Creator Wave 2 content begins going live across multiple niches simultaneously.',tag:'outreach'},
+    {t:'POST 26 — "Three reasons Brahmastra is different": identity + taste + price carousel',tag:'content'},
+    {t:'Chitkara University: AIESEC and E-Cell contacts confirmed for Week 10 activation',tag:'campus'},
+  ],
+  w10:[
+    {t:'CHITKARA ACTIVATION 1: 70-acre campus, 15,000+ students, hostel-heavy. E-Cell or student union coordination for zone access.',tag:'campus'},
+    {t:'Explore Fest sponsorship pitch: 7,000+ students in a single day across 30 events.',tag:'campus'},
+    {t:'POST 27 — Campus Chronicles Reel 3: "Brahmastra hits Chitkara." Show the highway campus scale.',tag:'content'},
+    {t:'POST 28 — Official sponsorship announcement: "Brahmastra is the official fuel of [Event]."',tag:'content'},
+    {t:'POST 29 — Creator Wave 2 mega-Reel: multiple creators in one edit. "The Brahmastra Tribe is growing."',tag:'content'},
+    {t:'First bulk order confirmed. Immediately publish a "Now Available At" post.',tag:'bulk'},
+    {t:'Amazon Sprint 2: all Warriors + creators push Amazon link simultaneously for 7 days',tag:'amazon'},
+  ],
+  w11:[
+    {t:'DOUBLE ACTIVATION DAY: morning at PEC Chandigarh, afternoon at Chitkara Rajpura. Two campuses, one day. The Reel writes itself.',tag:'campus'},
+    {t:'POST 30 — Double activation Reel: same-day edit, 24-hour turnaround',tag:'content'},
+    {t:'POST 31 — Before Brahmastra / After Brahmastra: three specific scenarios (pre-exam / pre-match / pre-session)',tag:'content'},
+    {t:'POST 32 — Low-sugar deep-dive: what is actually in Brahmastra, why it matters for the final push',tag:'content'},
+    {t:'Warriors expanded to PEC and Chitkara: 3–5 new Warriors per campus, brand kit dispatched',tag:'warriors'},
+    {t:'Long-term creator contracts: top 3–5 performers from Waves 1–2 offered 6-month agreements',tag:'outreach'},
+  ],
+  w12:[
+    {t:'POST 33 — 3-Month Milestone Reel: data-backed community celebration. Real numbers. Real campuses.',tag:'content'},
+    {t:'POST 34 — Thapar + PEC + Chitkara compilation: best activation moments from all three',tag:'content'},
+    {t:'POST 35 — Flavor Drop return with new faces from all three campuses',tag:'content'},
+    {t:'Full 3-Month Performance Report: every metric from Month 1. The growth story so far.',tag:'analytics'},
+    {t:'CU Mohali plan finalised: multi-zone activation strategy, 4–5 campus rep recruitment plan, CU Fest pitch approach, AI Fest 2026 identified',tag:'campus'},
+    {t:'Hell Energy competitive update: how far have they penetrated Punjab campuses by now?',tag:'intel'},
+  ],
+  w13:[
+    {t:'CU deep recon: map 5 key zones — main canteen, hostel blocks, academic wing, sports complex, open-air amphitheatre',tag:'campus'},
+    {t:'Society pitches delivered to all 5: IEEE CU, ACM CU, E-Cell CU, Cultural Society, Sports Society',tag:'campus'},
+    {t:'CU Fest official sponsorship pitch: 32 events, 6 categories, 148 universities.',tag:'campus'},
+    {t:'AI Fest 2026 sponsorship pitch: India\'s first AI Fest launched by CU.',tag:'campus'},
+    {t:'Recruit 4–5 CU campus reps: paid/product-compensated, running weekly activation touchpoints independently',tag:'campus'},
+    {t:'POST 36 — "Brahmastra is coming to CU Mohali." Teaser Reel. Build campus-wide anticipation.',tag:'content'},
+    {t:'Creator Wave 3: brief CU-focused and tricity micro-influencers with campus-specific audiences',tag:'outreach'},
+  ],
+  w14:[
+    {t:'CU ACTIVATION DAY 1: 5–6 hours across 2–3 simultaneous zones.',tag:'campus'},
+    {t:'POST 37 — CU activation Reel within 24 hours: "30,000 students. Here is what happened."',tag:'content'},
+    {t:'CU hostel canteen deals: approach operators at 10+ hostels for regular stocking',tag:'bulk'},
+    {t:'Sports complex tie-up: approach CU sports complex management for official pre/post-workout drink on site',tag:'bulk'},
+    {t:'POST 38 — "Which campus has the best Brahmastra moment?" Inter-campus comment war.',tag:'content'},
+    {t:'CU Warriors: select 3–5 students on activation day itself. Brief and send kit same day.',tag:'warriors'},
+  ],
+  w15:[
+    {t:'CU FEST ACTIVATION: sampling at all 32 event zones, challenge contest, giveaway for participants',tag:'campus'},
+    {t:'CU ACTIVATION DAY 2: different zone, different time of day, fresh audience segment',tag:'campus'},
+    {t:'POST 39 — CU Fest Reel: real crowd, real scale, 24-hour turnaround',tag:'content'},
+    {t:'POST 40 — "Brahmastra at 4 Campuses" map visual: Thapar, PEC, Chitkara, CU with student counts',tag:'content'},
+    {t:'NCR target list finalised: DTU, NSUT, IIIT Delhi, Amity Noida, JIIT Noida. Contact strategy per campus complete.',tag:'campus'},
+    {t:'Hell Energy check: have they activated at any Punjab campus? If yes, which ones?',tag:'intel'},
+  ],
+  w16:[
+    {t:'POST 41 — Month 4 highlights: CU Mohali takeover compilation',tag:'content'},
+    {t:'POST 42 — All-campus Warriors feature: Warriors from all 4 Punjab campuses in one post',tag:'content'},
+    {t:'Month 4 Analytics Report: full performance, CU data specifically, bulk order pipeline',tag:'analytics'},
+    {t:'NCR Month 5 fully briefed: DTU + NSUT contacts confirmed, Wave 4 creators identified, campus reps being recruited',tag:'campus'},
+    {t:'Creator contract review: which Wave 1–2 creators are performing? Renew or replace.',tag:'outreach'},
+  ],
+  w17:[
+    {t:'DTU ACTIVATION: Engifest / E-Cell event. Sampling + challenge + campus rep launch.',tag:'campus'},
+    {t:'NSUT ACTIVATION: hostel sampling + gaming club official tie-up. "Official energy drink of NSUT Gaming Club."',tag:'campus'},
+    {t:'POST 43–46 — NCR Entry content: "Brahmastra has arrived in Delhi." Four posts across two weeks.',tag:'content'},
+    {t:'Creator Wave 4: 50 NCR-based DMs sent. Product dispatched to respondents.',tag:'outreach'},
+    {t:'Delhi gym network: 10 gyms approached. First month product free + co-branded content deal.',tag:'bulk'},
+    {t:'Hell Energy check: are they at DTU or NSUT already?',tag:'intel'},
+  ],
+  w19:[
+    {t:'AMITY NOIDA ACTIVATION: 5+ Warriors recruited on activation day itself',tag:'campus'},
+    {t:'JIIT NOIDA ACTIVATION: Sector 62 + 128 across one or two days',tag:'campus'},
+    {t:'IIIT DELHI ACTIVATION: focused, high-quality. 500 students here = 50,000 digital reach through organic sharing.',tag:'campus'},
+    {t:'POST 47–52 — Campus Chronicles per NCR campus, mega compilation Reel, Punjab vs NCR comparison Reel',tag:'content'},
+    {t:'Creator Wave 4 content goes live: first truly national digital presence for Brahmastra',tag:'outreach'},
+    {t:'YouTube pitch campaign: 10 personalised pitches to Delhi YouTubers (100K–1M subscribers)',tag:'outreach'},
+  ],
+  w21:[
+    {t:'20+ NCR gym / gaming cafe stocking locations confirmed. "Now Available At" post per new location.',tag:'bulk'},
+    {t:'Gurugram / Noida tech corridor: 5–10 gyms for young professional daily-habit audience',tag:'bulk'},
+    {t:'Mega-creator activation: first 1M+ creator integration.',tag:'outreach'},
+    {t:'National Warriors challenge: Punjab + NCR Warriors combined community event',tag:'warriors'},
+    {t:'POST 53–57 — Distribution announcements, mega-creator content, campus moments',tag:'content'},
+    {t:'Full competitor comparison: Brahmastra share of voice on campus vs Hell Energy India after 5 months',tag:'intel'},
+  ],
+  w23:[
+    {t:'POST 58–60 — "180 days. 9 campuses. The final push, everywhere." Full brand statement to close the 6 months.',tag:'content'},
+    {t:'Full 6-Month Performance Report: every metric from Day 1, every campus, every creator. The complete growth story.',tag:'analytics'},
+    {t:'Brand health audit: Brahmastra vs Hell Energy share of voice on campus conversations and DMs',tag:'intel'},
+    {t:'Distribution map: Punjab + NCR Brahmastra presence plotted vs Hell Energy India presence',tag:'intel'},
+    {t:'Month 7+ strategy document: retail distribution pitch, first OOH brief, national campus expansion beyond NCR',tag:'analytics'},
+    {t:'Creator portfolio final review: which partnerships get 12-month contracts?',tag:'outreach'},
+    {t:'Deliver Month 7 plan to client with full recommendation for next phase',tag:'analytics'},
+  ],
+};
+
+const TAG_C = {content:'tag-gold',intel:'tag-purple',campus:'tag-green',outreach:'tag-blue',amazon:'tag-blue',analytics:'tag-gray',warriors:'tag-gold',bulk:'tag-green',identity:'tag-purple',ops:'tag-gray'};
+const TAG_L = {content:'Content',intel:'Competitor intel',campus:'Campus',outreach:'Outreach',amazon:'Amazon',analytics:'Analytics',warriors:'Warriors',bulk:'Bulk/Retail',identity:'Identity',ops:'Ops'};
+
+// ═══════════════════════════════════════════════════════════════
+// CAMPUS DATA
+// ═══════════════════════════════════════════════════════════════
+let campusData = {
+  'Thapar University':  {status:'Upcoming', cans:0, content:0, leads:0, society:''},
+  'PEC Chandigarh':     {status:'Upcoming', cans:0, content:0, leads:0, society:''},
+  'Chitkara University':{status:'Upcoming', cans:0, content:0, leads:0, society:''},
+  'CU Mohali':          {status:'Upcoming', cans:0, content:0, leads:0, society:''},
+  'DTU Delhi':          {status:'Upcoming', cans:0, content:0, leads:0, society:''},
+  'NSUT Delhi':         {status:'Upcoming', cans:0, content:0, leads:0, society:''},
+  'IIIT Delhi':         {status:'Upcoming', cans:0, content:0, leads:0, society:''},
+  'Amity Noida':        {status:'Upcoming', cans:0, content:0, leads:0, society:''},
+  'JIIT Noida':         {status:'Upcoming', cans:0, content:0, leads:0, society:''},
+};
+
+// ═══════════════════════════════════════════════════════════════
+// KPI DATA
+// ═══════════════════════════════════════════════════════════════
+const KPI_DATA = [
+  {l:'Instagram followers',    t:[1000, 4000,  8000, 25000], a:0},
+  {l:'Avg Reel views',         t:[2000, 8000, 15000, 50000], a:0},
+  {l:'Amazon reviews',         t:[15,   40,    60,   120],   a:0},
+  {l:'Campus activations',     t:[2,    5,     7,    9],     a:0},
+  {l:'Creator partnerships',   t:[5,    10,    15,   20],    a:0},
+  {l:'Brahmastra Warriors',    t:[5,    12,    22,   45],    a:0},
+  {l:'Bulk / retail buyers',   t:[5,    12,    20,   35],    a:0},
+  {l:'Monthly DM enquiries',   t:[20,   60,   100,  200],    a:0},
+];
+
+// ═══════════════════════════════════════════════════════════════
+// TAB SWITCH
+// ═══════════════════════════════════════════════════════════════
+function sw(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if (el) el.classList.add('on');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD — WEEK FOCUS CARD
+// ═══════════════════════════════════════════════════════════════
+let taskState = {};
+
+function renderWeekFocusCard() {
+  const sel = document.getElementById('week-dash-sel');
+  const wk = sel.value;
+  const tasks = WEEKS[wk] || [];
+  if (!taskState[wk]) taskState[wk] = {};
+  const done = tasks.filter((_, i) => taskState[wk][i]).length;
+  const total = tasks.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+
+  document.getElementById('wf-prog-fill').style.width = pct + '%';
+  document.getElementById('week-focus-stats').innerHTML =
+    `<span style="font-size:13px;color:var(--muted)">${done} of ${total} tasks — <strong style="color:var(--text2)">${pct}%</strong></span>`;
+
+  // Show first 4 incomplete tasks as preview
+  const incomplete = tasks.map((t,i) => ({...t, i})).filter(t => !taskState[wk][t.i]).slice(0,4);
+  document.getElementById('week-focus-tasks').innerHTML = incomplete.length
+    ? incomplete.map(t => `<div style="font-size:12px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--border2);line-height:1.4">`
+        + `<span class="tag ${TAG_C[t.tag]||'tag-gray'}" style="margin-right:6px">${TAG_L[t.tag]||t.tag}</span>${t.t.slice(0,90)}${t.t.length>90?'…':''}</div>`).join('')
+    + (tasks.length > 4 ? `<div style="font-size:11px;color:var(--muted2);padding:6px 0">${tasks.length - 4 > incomplete.length ? '' : ''}View all in Weekly Tasks →</div>` : '')
+    : `<div style="font-size:12px;color:var(--green-light);padding:6px 0">✓ All tasks complete for this week</div>`;
+}
+renderWeekFocusCard();
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD — UPDATE NUMBERS
+// ═══════════════════════════════════════════════════════════════
+async function updateDash() {
+  const btn = document.getElementById('dash-save-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Saving…';
+
+  const metricMap = [
+    ['u-followers', 'Followers',  'd-followers'],
+    ['u-reviews',   'Reviews',    'd-reviews'],
+    ['u-warriors',  'Warriors',   'd-warriors'],
+    ['u-creators',  'Creators',   'd-creators'],
+    ['u-buyers',    'BulkBuyers', 'd-buyers'],
+    ['u-camps',     'Campuses',   'd-camps'],
+  ];
+
+  const toSend = [];
+  metricMap.forEach(([inputId, metricName]) => {
+    const val = document.getElementById(inputId).value.trim();
+    if (val !== '') toSend.push({metric: metricName, value: val});
+  });
+
+  if (toSend.length === 0) {
+    toast('Enter at least one value first', 'info');
+    btn.disabled = false;
+    btn.textContent = 'Save';
+    return;
+  }
+
+  // Optimistic UI update
+  metricMap.forEach(([inputId, , displayId]) => {
+    const val = document.getElementById(inputId).value.trim();
+    if (!val) return;
+    if (displayId === 'd-camps') {
+      document.getElementById('d-camps').textContent = val + ' / 9';
+    } else {
+      document.getElementById(displayId).textContent = Number(val).toLocaleString();
+    }
+  });
+
+  // Save to backend
+  let allOk = true;
+  for (const {metric, value} of toSend) {
+    try {
+      await DB.save('kpis', {metric, data: {value: parseInt(value), updated_at: new Date().toISOString()}});
+    } catch(err) {
+      console.error('Failed to save:', metric, err);
+      allOk = false;
+    }
+  }
+
+  if (allOk) {
+    const names = toSend.map(m => m.metric).join(', ');
+    addActivity('kpi', `KPI updated — ${names}`);
+    toast(`Saved — ${toSend.length} metric${toSend.length > 1 ? 's' : ''} updated`);
+    // Clear inputs
+    metricMap.forEach(([inputId]) => { document.getElementById(inputId).value = ''; });
+  } else {
+    toast('Save failed — check connection', 'err');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Save';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// WEEKLY TASKS
+// ═══════════════════════════════════════════════════════════════
+function loadWeek() {
+  const wk = document.getElementById('week-sel').value;
+  const tasks = WEEKS[wk] || [];
+  if (!taskState[wk]) taskState[wk] = {};
+  const done = tasks.filter((_, i) => taskState[wk][i]).length;
+  const total = tasks.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('week-progress-label').textContent = `${done} of ${total} tasks complete — ${pct}%`;
+  document.getElementById('week-prog-fill').style.width = pct + '%';
+
+  const list = document.getElementById('task-list');
+  list.innerHTML = '';
+  tasks.forEach((task, i) => {
+    const checked = !!taskState[wk][i];
+    const row = document.createElement('div');
+    row.className = 'task-row';
+    row.innerHTML = `<div class="cb${checked?' done':''}"></div><div class="task-text${checked?' done':''}">${task.t}<span class="tag ${TAG_C[task.tag]||'tag-gray'}" style="margin-left:8px">${TAG_L[task.tag]||task.tag}</span></div>`;
+    row.querySelector('.cb').onclick = () => toggleTask(wk, i);
+    list.appendChild(row);
+  });
+}
+
+async function toggleTask(wk, i) {
+  taskState[wk][i] = !taskState[wk][i];
+  loadWeek();
+  renderWeekFocusCard();
+  const done = taskState[wk][i];
+  if (done) addActivity('task', `Task complete — ${WEEKS[wk][i]?.t?.slice(0, 60) || ''}…`);
+  try {
+    await DB.save('tasks', {data: {week: wk, task_index: i, done}});
+  } catch(e) { console.warn('Task save failed', e); }
+}
+
+function resetWeek() {
+  const wk = document.getElementById('week-sel').value;
+  taskState[wk] = {};
+  loadWeek();
+  renderWeekFocusCard();
+  toast('Week reset', 'info');
+}
+loadWeek();
+
+// ═══════════════════════════════════════════════════════════════
+// KPI TRACKER
+// ═══════════════════════════════════════════════════════════════
+function renderKPIs() {
+  const el = document.getElementById('kpi-rows');
+  el.innerHTML = '';
+  KPI_DATA.forEach((k, i) => {
+    const row = document.createElement('div');
+    row.className = 'kpi-row';
+    const a = k.a;
+    const ok = a > 0 && a >= k.t[0];
+    const ac = a === 0 ? 'var(--muted2)' : (ok ? 'var(--green-light)' : 'var(--red-light)');
+    row.innerHTML =
+      `<div style="font-size:13px;font-weight:500;color:var(--text2)">${k.l}</div>`
+      + k.t.map(v => `<div style="font-size:13px;color:var(--muted);text-align:center">${v.toLocaleString()}</div>`).join('')
+      + `<div style="display:flex;gap:8px;align-items:center">
+           <input type="number" placeholder="actual" value="${a||''}" oninput="KPI_DATA[${i}].a=parseInt(this.value)||0;renderKPIs()" style="width:76px;font-size:12px;padding:5px 8px">
+           <span style="font-size:14px;font-weight:700;color:${ac}">${a ? a.toLocaleString() : '—'}</span>
+         </div>`;
+    el.appendChild(row);
+  });
+}
+renderKPIs();
+
+// ═══════════════════════════════════════════════════════════════
+// CAMPUS OPS
+// ═══════════════════════════════════════════════════════════════
+function statusPill(status) {
+  const map = {
+    'Upcoming':           'pill pill-upcoming',
+    'In Progress':        'pill pill-active',
+    'Activated':          'pill pill-activated',
+    'Partnership Locked': 'pill pill-locked',
+  };
+  return `<span class="${map[status]||'pill pill-upcoming'}">${status}</span>`;
+}
+
+function renderCampus() {
+  const el = document.getElementById('campus-rows');
+  el.innerHTML = '';
+  Object.entries(campusData).forEach(([name, d]) => {
+    const row = document.createElement('div');
+    row.className = 'camp-grid';
+    row.innerHTML =
+      `<div style="font-weight:500;color:var(--text2);font-size:13px">${name}</div>`
+      + `<div>${statusPill(d.status)}</div>`
+      + `<div style="color:var(--muted);font-size:13px;text-align:center">${d.cans || '—'}</div>`
+      + `<div style="color:var(--muted);font-size:13px;text-align:center">${d.content || '—'}</div>`
+      + `<div style="color:var(--muted);font-size:13px;text-align:center">${d.leads || '—'}</div>`
+      + `<div style="color:var(--muted2);font-size:12px">${d.society || '—'}</div>`;
+    el.appendChild(row);
+  });
+}
+renderCampus();
+
+async function logCampus() {
+  const btn = document.getElementById('camp-save-btn');
+  const name    = document.getElementById('camp-sel').value;
+  const cans    = parseInt(document.getElementById('camp-cans').value) || 0;
+  const content = parseInt(document.getElementById('camp-content').value) || 0;
+  const leads   = parseInt(document.getElementById('camp-leads').value) || 0;
+  const society = document.getElementById('camp-society').value || '';
+  const date    = new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+
+  campusData[name] = {status:'Activated', cans, content, leads, society};
+  const n = Object.values(campusData).filter(c => c.status === 'Activated' || c.status === 'Partnership Locked').length;
+  document.getElementById('d-camps').textContent = n + ' / 9';
+  renderCampus();
+  ['camp-cans','camp-content','camp-leads','camp-society'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Saving…';
+  try {
+    await DB.save('campus', {data: {campus: name, status:'Activated', cans, content, leads, society, date}});
+    addActivity('campus', `Campus activation logged — ${name} (${cans} cans, ${leads} leads)`);
+    toast('Activation saved');
+  } catch(e) { toast('Save failed — check connection', 'err'); }
+  btn.disabled = false;
+  btn.textContent = 'Log Activation';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CREATOR CRM
+// ═══════════════════════════════════════════════════════════════
+let creatorList = [];
+
+const CR_STATUS_CLASS = {
+  'DM sent':             'crs-dm',
+  'Replied — interested':'crs-interested',
+  'Product sent':        'crs-sent',
+  'Content live':        'crs-live',
+  'No reply':            'crs-noreply',
+  'Not a fit':           'crs-notfit',
+};
+
+function updatePipelineSummary() {
+  document.getElementById('pc-dm').textContent         = creatorList.filter(c => c.status === 'DM sent').length + creatorList.filter(c => c.status === 'No reply').length;
+  document.getElementById('pc-interested').textContent = creatorList.filter(c => c.status === 'Replied — interested').length;
+  document.getElementById('pc-sent').textContent       = creatorList.filter(c => c.status === 'Product sent').length;
+  document.getElementById('pc-live').textContent       = creatorList.filter(c => c.status === 'Content live').length;
+}
+
+function renderCreators() {
+  const el = document.getElementById('creator-list');
+  if (!creatorList.length) { el.innerHTML = '<div class="empty-state">No creators added yet.</div>'; updatePipelineSummary(); return; }
+  el.innerHTML = creatorList.map((c, i) => `<div class="cr-grid">
+    <div style="font-weight:500;color:var(--text2)">${c.h}</div>
+    <div style="color:var(--muted);font-size:12px">${c.niche}</div>
+    <div style="color:var(--muted);font-size:12px">${c.f ? c.f + 'K' : '—'}</div>
+    <div style="color:var(--muted2);font-size:12px">${c.wave}</div>
+    <div><span class="cr-status-pill ${CR_STATUS_CLASS[c.status]||'crs-dm'}">${c.status}</span></div>
+    <div><select onchange="updateCreatorStatus(${i},this.value)" style="font-size:12px;padding:4px 8px;width:auto">
+      ${['DM sent','Replied — interested','Product sent','Content live','No reply','Not a fit'].map(s=>`<option${s===c.status?' selected':''}>${s}</option>`).join('')}
+    </select></div>
+  </div>`).join('');
+  updatePipelineSummary();
+  document.getElementById('d-creators').textContent = creatorList.filter(c => c.status === 'Content live').length;
+}
+
+async function addCreator() {
+  const h = document.getElementById('cr-handle').value.trim();
+  if (!h) return;
+  const btn = document.getElementById('cr-add-btn');
+  const creator = {
+    h,
+    niche:  document.getElementById('cr-niche').value,
+    f:      document.getElementById('cr-followers').value,
+    wave:   document.getElementById('cr-wave').value,
+    status: document.getElementById('cr-status').value,
+  };
+  creatorList.push(creator);
+  document.getElementById('cr-handle').value = '';
+  document.getElementById('cr-followers').value = '';
+  renderCreators();
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Saving…';
+  try {
+    const newId = await DB.save('creators', {data: {h: creator.h, niche: creator.niche, f: creator.f, wave: creator.wave, status: creator.status, date: new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}}, {returnId: true});
+    if (newId) creatorList[creatorList.length - 1]._id = newId;
+    addActivity('creator', `Creator added — ${creator.h} (${creator.niche}, ${creator.wave})`);
+    toast('Creator added');
+  } catch(e) { console.error('Creator save failed:', e); toast('Save failed — check connection', 'err'); }
+  btn.disabled = false;
+  btn.textContent = 'Add Creator';
+}
+
+async function updateCreatorStatus(i, status) {
+  creatorList[i].status = status;
+  renderCreators();
+  addActivity('creator', `Creator updated — ${creatorList[i].h} → ${status}`);
+  try {
+    const c = creatorList[i];
+    if (c._id) {
+      await DB.patch('creators', c._id, {data: {h: c.h, niche: c.niche, f: c.f, wave: c.wave, status, date: c.date}});
+    }
+  } catch(e) { console.error('Creator status update failed:', e); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMPETITOR INTEL
+// ═══════════════════════════════════════════════════════════════
+let compLog = [];
+
+function renderCompStats() {
+  document.getElementById('cs-total').textContent = compLog.length;
+  document.getElementById('cs-high').textContent  = compLog.filter(c => c.threat.startsWith('High')).length;
+  document.getElementById('cs-med').textContent   = compLog.filter(c => c.threat.startsWith('Medium')).length;
+  document.getElementById('cs-low').textContent   = compLog.filter(c => c.threat.startsWith('Low')).length;
+
+  // Brand breakdown
+  const brands = {};
+  compLog.forEach(c => { brands[c.brand] = (brands[c.brand] || 0) + 1; });
+  const brandEl = document.getElementById('comp-brand-breakdown');
+  if (!Object.keys(brands).length) { brandEl.innerHTML = '<div class="empty-state">No intel logged yet</div>'; return; }
+  brandEl.innerHTML = Object.entries(brands).sort((a,b) => b[1]-a[1]).map(([b, n]) =>
+    `<div class="stat-row"><span class="stat-label">${b}</span><span class="stat-val">${n} move${n!==1?'s':''}</span></div>`).join('');
+}
+
+function threatPill(threat) {
+  if (threat.startsWith('High'))   return '<span class="pill pill-threat-high">High Threat</span>';
+  if (threat.startsWith('Medium')) return '<span class="pill pill-threat-med">Medium</span>';
+  return '<span class="pill pill-threat-low">Monitoring</span>';
+}
+
+function renderCompLog() {
+  const el = document.getElementById('comp-log');
+  if (!compLog.length) { el.innerHTML = '<div class="empty-state">No intel logged yet. Check competitors every Monday morning.</div>'; renderCompStats(); return; }
+  el.innerHTML = compLog.map(c => `
+    <div class="comp-entry${c.threat.startsWith('High')?' high-threat':''}">
+      <div class="comp-entry-header">
+        <span class="comp-entry-brand">${c.brand}</span>
+        ${threatPill(c.threat)}
+        <span class="comp-entry-date">${c.date}</span>
+      </div>
+      <div class="comp-entry-move">${c.move}</div>
+    </div>`).join('');
+  renderCompStats();
+}
+
+async function logCompMove() {
+  const move = document.getElementById('comp-move').value.trim();
+  if (!move) return;
+  const btn    = document.getElementById('intel-save-btn');
+  const brand  = document.getElementById('comp-brand').value;
+  const threat = document.getElementById('comp-threat').value;
+  const date   = new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+
+  compLog.unshift({brand, move, threat, date});
+  document.getElementById('comp-move').value = '';
+  renderCompLog();
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Saving…';
+  try {
+    await DB.save('intel', {data: {brand, move, threat, date}});
+    const level = threat.startsWith('High') ? 'high threat' : threat.startsWith('Medium') ? 'medium threat' : 'monitoring';
+    addActivity('intel', `Intel logged — ${brand} (${level})`);
+    toast('Intel saved');
+  } catch(e) { toast('Save failed — check connection', 'err'); }
+  btn.disabled = false;
+  btn.textContent = 'Log This Move';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+syncAll();
+setInterval(syncAll, CONFIG.SYNC_INTERVAL_MS);
+</script>
+</body>
+</html>
